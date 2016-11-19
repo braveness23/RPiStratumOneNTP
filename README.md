@@ -20,7 +20,11 @@ Update system
 
 	sudo apt-get update
 	sudo apt-get upgrade
+	sudo apt-get dist-upgrade
 
+Install all of the packages we'll need
+
+	sudo apt-get install -y pps-tools gpsd gpsd-clients minicom ntpstat ntp
 
 Do basic configuration of RPi
 
@@ -36,10 +40,6 @@ Change WiFi country to US
 Way more detail needed here
 
 	sudo iwlist wlan0 scan
- 
-Install pps-tools
-
-	sudo apt-get -y install pps-tools
 
 Configure PPS
 
@@ -77,10 +77,6 @@ Test PPS
 	source 0 - assert 1475544228.003372432, sequence: 1966 - clear  0.000000000, sequence: 0
 	source 0 - assert 1475544229.003370392, sequence: 1967 - clear  0.000000000, sequence: 0
 	source 0 - assert 1475544230.003367995, sequence: 1968 - clear  0.000000000, sequence: 0
-	Install gpsd and gpsd-clients
-
-	sudo apt-get -y install gpsd gpsd-clients
-
 
 Configure gpsd
 
@@ -88,8 +84,8 @@ Configure gpsd
 	sudo nano /boot/cmdline.txt
 
 
-Remove: 
-console=serial0,115200
+	Remove: 
+	console=serial0,115200
 
 
 	sudo systemctl stop serial-getty@ttyS0.service
@@ -98,10 +94,10 @@ console=serial0,115200
 
 	sudo nano /boot/config.txt
 
-
 Append with: 
-init_uart_baud=9600
-enable_uart=1
+
+	init_uart_baud=9600
+	enable_uart=1
 
 
 Reboot
@@ -121,11 +117,11 @@ Confirm that GPS codes are output
 
 	sudo nano /etc/default/gpsd
 
-START_DAEMON="true"
-GPSD_OPTIONS="-n"
-DEVICES="/dev/ttyS0"
-USBAUTO="false"
-GPSD_SOCKET="/var/run/gpsd.sock"
+	START_DAEMON="true"
+	GPSD_OPTIONS="-n"
+	DEVICES="/dev/ttyS0"
+	USBAUTO="false"
+	GPSD_SOCKET="/var/run/gpsd.sock"
 
 
 Reboot
@@ -153,16 +149,11 @@ Reboot
 	mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqjmqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj
 
 
-Install minicom and ntpstat
-
-
-	sudo apt-get -y install minicom ntpstat
-
-
 Test ntpstat:
 
 
 	ntpstat
+
 	synchronised to NTP server (129.6.15.28) at stratum 2
    	time correct to within 139 ms
    	polling server every 64 s
@@ -207,21 +198,19 @@ Test that NTP is configured to talk to the type 28.0 shared memory driver, and c
 
 	ntpq -pn
 
-Stop existing NTP service then download new, compile and replace it
+# Stop existing NTP service then download new, compile and replace it
 
-	sudo service ntp stop
-	sudo apt-mark hold ntp
-	mkdir -p ~/ntp
-	cd ~/ntp
-	sudo apt-get install libcap-dev
-	wget http://archive.ntp.org/ntp4/ntp-4.2/ntp-4.2.8p6.tar.gz
-	tar xvfz ntp-4.2.8p6.tar.gz
-	cd ntp-4.2.8p6/
-	./configure --enable-linuxcaps
-	make
-	sudo make install
-	sudo cp /usr/local/bin/ntp* /usr/bin/  && sudo cp /usr/local/sbin/ntp* /usr/sbin/
-	sudo service ntp start
+#	sudo service ntp stop
+#	sudo apt-mark hold ntp
+#	mkdir -p ~/ntp
+#	sudo apt-get install libcap-dev
+#	wget http://archive.ntp.org/ntp4/ntp-4.2/ntp-4.2.8p6.tar.gz
+#	tar xvfz ntp-4.2.8p6.tar.gz
+#	./configure --enable-linuxcaps
+#	make
+#	sudo make install
+#	sudo cp /usr/local/bin/ntp* /usr/bin/  && sudo cp /usr/local/sbin/ntp* /usr/sbin/
+#	sudo service ntp start
 
 Sources:
 
