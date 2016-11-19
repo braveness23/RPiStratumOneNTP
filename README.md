@@ -34,15 +34,12 @@ Change Timezone to US EASTERN
 Change Keyboard layout to Generic 105-key PC
 Change WiFi country to US
 Way more detail needed here
-sudo iwlist wlan0 scan
 
-
+	sudo iwlist wlan0 scan
  
 Install pps-tools
 
-
 	sudo apt-get -y install pps-tools
-
 
 Configure PPS
 
