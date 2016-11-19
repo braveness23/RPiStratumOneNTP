@@ -85,18 +85,18 @@ Test PPS
 Configure gpsd
 
 
-sudo nano /boot/cmdline.txt
+	sudo nano /boot/cmdline.txt
 
 
 Remove: 
 console=serial0,115200
 
 
-sudo systemctl stop serial-getty@ttyS0.service
-sudo systemctl disable serial-getty@ttyS0.service
+	sudo systemctl stop serial-getty@ttyS0.service
+	sudo systemctl disable serial-getty@ttyS0.service
 
 
-Sudo nano /boot/config.txt
+	sudo nano /boot/config.txt
 
 
 Append with: 
@@ -107,19 +107,20 @@ enable_uart=1
 Reboot
 
 
-ls /dev/tty*
+	ls /dev/tty*
 
 
 Confirm that ttypS0 is listed
 
 
-Sudo cat /dev/ttyS0
+	sudo cat /dev/ttyS0
 
 
 Confirm that GPS codes are output
 
 
-sudo nano /etc/default/gpsd
+	sudo nano /etc/default/gpsd
+
 START_DAEMON="true"
 GPSD_OPTIONS="-n"
 DEVICES="/dev/ttyS0"
@@ -130,32 +131,32 @@ GPSD_SOCKET="/var/run/gpsd.sock"
 Reboot
 
 
-Cgps -s
+	cgps -s
 
 
-lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqklqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk
-x    Time:       2016-10-04T12:43:34.000Z   xxPRN:   Elev:  Azim:  SNR:  Used: x
-x    Latitude:    39.164391 N               xx  28    76    038    00      Y   x
-x    Longitude:   84.549300 W               xx  17    59    284    17      Y   x
-x    Altitude:   509.8 ft                   xx   1    42    053    17      Y   x
-x    Speed:      0.4 mph                    xx  19    38    263    00      Y   x
-x    Heading:    113.2 deg (true)           xx  30    36    184    24      Y   x
-x    Climb:      0.0 ft/min                 xx  11    27    052    21      Y   x
-x    Status:     3D FIX (23 secs)           xx  22    19    087    21      N   x
-x    Longitude Err:   +/- 43 ft             xx   3    17    108    00      N   x
-x    Latitude Err:    +/- 53 ft             xx   6    16    204    00      N   x
-x    Altitude Err:    +/- 65 ft             xx   7    11    169    00      N   x
-x    Course Err:      n/a                   xx  13    08    262    14      N   x
-x    Speed Err:       +/- 72 mph            xx  24    04    326    00      N   x
-x    Time offset:     0.587                 xx                                 x
-x    Grid Square:     EM79rd                xx                                 x
-mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqjmqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj
+	lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqklqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk
+	x    Time:       2016-10-04T12:43:34.000Z   xxPRN:   Elev:  Azim:  SNR:  Used: x
+	x    Latitude:    39.164391 N               xx  28    76    038    00      Y   x
+	x    Longitude:   84.549300 W               xx  17    59    284    17      Y   x
+	x    Altitude:   509.8 ft                   xx   1    42    053    17      Y   x
+	x    Speed:      0.4 mph                    xx  19    38    263    00      Y   x
+	x    Heading:    113.2 deg (true)           xx  30    36    184    24      Y   x
+	x    Climb:      0.0 ft/min                 xx  11    27    052    21      Y   x
+	x    Status:     3D FIX (23 secs)           xx  22    19    087    21      N   x
+	x    Longitude Err:   +/- 43 ft             xx   3    17    108    00      N   x
+	x    Latitude Err:    +/- 53 ft             xx   6    16    204    00      N   x
+	x    Altitude Err:    +/- 65 ft             xx   7    11    169    00      N   x
+	x    Course Err:      n/a                   xx  13    08    262    14      N   x
+	x    Speed Err:       +/- 72 mph            xx  24    04    326    00      N   x
+	x    Time offset:     0.587                 xx                                 x
+	x    Grid Square:     EM79rd                xx                                 x
+	mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqjmqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj
 
 
 Install minicom and ntpstat
 
 
-sudo apt-get -y install minicom ntpstat
+	sudo apt-get -y install minicom ntpstat
 
 
 Test ntpstat:
@@ -170,57 +171,57 @@ Test ntpstat:
 Configure /etc/ntp.config
 
 
-# https://www.eecis.udel.edu/~mills/database/brief/precise/precise.pdf
-# - PPS believed only if prefer peer correct and within 128 ms
-tinker  step 0.4  stepback 0.4  stepfwd 0.4
+	# https://www.eecis.udel.edu/~mills/database/brief/precise/precise.pdf
+	# - PPS believed only if prefer peer correct and within 128 ms
+	tinker  step 0.4  stepback 0.4  stepfwd 0.4
 
 
-# You do need to talk to an NTP server or two (or three).
-#server ntp.your-provider.example
+	# You do need to talk to an NTP server or two (or three).
+	#server ntp.your-provider.example
 
 
-# Kernel-mode PPS ref-clock for the precise seconds
-server 127.127.22.0 minpoll 4 maxpoll 4
-fudge 127.127.22.0 refid PPS stratum 0
+	# Kernel-mode PPS ref-clock for the precise seconds
+	server 127.127.22.0 minpoll 4 maxpoll 4
+	fudge 127.127.22.0 refid PPS stratum 0
 
 
-# Server from shared memory provided by gpsd
-server 127.127.28.0 minpoll 4 maxpoll 4 prefer
-fudge 127.127.28.0 refid NMEA stratum 3 time1 0.510
+	# Server from shared memory provided by gpsd
+	server 127.127.28.0 minpoll 4 maxpoll 4 prefer
+	fudge 127.127.28.0 refid NMEA stratum 3 time1 0.510
 
 
-# pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
-# pick a different set every time it starts up.  Please consider joining the
-# pool: <http://www.pool.ntp.org/join.html>
-# server 0.debian.pool.ntp.org iburst
-# server 1.debian.pool.ntp.org iburst
-# server 2.debian.pool.ntp.org iburst
-# server 3.debian.pool.ntp.org iburst
+	# pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
+	# pick a different set every time it starts up.  Please consider joining the
+	# pool: <http://www.pool.ntp.org/join.html>
+	# server 0.debian.pool.ntp.org iburst
+	# server 1.debian.pool.ntp.org iburst
+	# server 2.debian.pool.ntp.org iburst
+	# server 3.debian.pool.ntp.org iburst
 
 Restart NTP
 
-sudo service ntp stop
-sudo service ntp start
+	sudo service ntp stop
+	sudo service ntp start
 
 Test that NTP is configured to talk to the type 28.0 shared memory driver, and can see the GPSD.
 
-ntpq -pn
+	ntpq -pn
 
 Stop existing NTP service then download new, compile and replace it
 
-sudo service ntp stop
-sudo apt-mark hold ntp
-mkdir -p ~/ntp
-cd ~/ntp
-sudo apt-get install libcap-dev
-wget http://archive.ntp.org/ntp4/ntp-4.2/ntp-4.2.8p6.tar.gz
-tar xvfz ntp-4.2.8p6.tar.gz
-cd ntp-4.2.8p6/
-./configure --enable-linuxcaps
-make
-sudo make install
-sudo cp /usr/local/bin/ntp* /usr/bin/  && sudo cp /usr/local/sbin/ntp* /usr/sbin/
-sudo service ntp start
+	sudo service ntp stop
+	sudo apt-mark hold ntp
+	mkdir -p ~/ntp
+	cd ~/ntp
+	sudo apt-get install libcap-dev
+	wget http://archive.ntp.org/ntp4/ntp-4.2/ntp-4.2.8p6.tar.gz
+	tar xvfz ntp-4.2.8p6.tar.gz
+	cd ntp-4.2.8p6/
+	./configure --enable-linuxcaps
+	make
+	sudo make install
+	sudo cp /usr/local/bin/ntp* /usr/bin/  && sudo cp /usr/local/sbin/ntp* /usr/sbin/
+	sudo service ntp start
 
 Sources:
 
