@@ -7,33 +7,33 @@ Turn this into an ansible playbook
 Download RASPBIAN JESSIE LITE and install onto MicroSD card
 
 
-sudo umount /dev/sdb2
-sudo umount /dev/sdb1
-sudo dd bs=4M if=2016-09-23-raspbian-jessie.img of=/dev/sdb
+	sudo umount /dev/sdb2
+	sudo umount /dev/sdb1
+	sudo dd bs=4M if=2016-09-23-raspbian-jessie.img of=/dev/sdb
 	sync
 
 
-	For details: https://www.raspberrypi.org/documentation/installation/installing-images/linux.md
+For details: https://www.raspberrypi.org/documentation/installation/installing-images/linux.md
 
 
 Update system
 
-
-sudo apt-get update
-sudo apt-get upgrade
+	sudo apt-get update
+	sudo apt-get upgrade
 
 
 Do basic configuration of RPi
 
 
-sudo raspi-config
-	Expand File System
+	sudo raspi-config
+	
+Expand File System
 Change User Password
 Change Locale to en_US.UTF-8
 Change Timezone to US EASTERN
 Change Keyboard layout to Generic 105-key PC
 Change WiFi country to US
-	Way more detail needed here
+Way more detail needed here
 sudo iwlist wlan0 scan
 
 
@@ -41,50 +41,48 @@ sudo iwlist wlan0 scan
 Install pps-tools
 
 
-sudo apt-get -y install pps-tools
+	sudo apt-get -y install pps-tools
 
 
 Configure PPS
 
 
-sudo nano /etc/modules
-# /etc/modules: kernel modules to load at boot time.
-pps-gpio
+	sudo nano /etc/modules
+	# /etc/modules: kernel modules to load at boot time.
+	pps-gpio
 
 
-sudo nano /boot/config.txt
-# /boot/config.txt
-# GPIO 24 is pin 18 on Raspberry Pi.  Connect your PPS to pin 18
-dtoverlay=pps-gpio,gpiopin=24
+	sudo nano /boot/config.txt
+	# /boot/config.txt
+	# GPIO 24 is pin 18 on Raspberry Pi.  Connect your PPS to pin 18
+	dtoverlay=pps-gpio,gpiopin=24
 
 
 Reboot
 
-
 Test PPS
 
 
-dmesg | grep pps
-[    5.977541] pps_core: LinuxPPS API ver. 1 registered
-[    5.977560] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
-[    6.046277] pps pps0: new PPS source pps.-1
-[    6.046356] pps pps0: Registered IRQ 504 as PPS source
+	dmesg | grep pps
+
+	[    5.977541] pps_core: LinuxPPS API ver. 1 registered
+	[    5.977560] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+	[    6.046277] pps pps0: new PPS source pps.-1
+	[    6.046356] pps pps0: Registered IRQ 504 as PPS source
 
 
+	sudo ppstest /dev/pps0
 
+	trying PPS source "/dev/pps0"
+	found PPS source "/dev/pps0"
+	ok, found 1 source(s), now start fetching data...
+	source 0 - assert 1475544227.003374325, sequence: 1965 - clear  0.000000000, sequence: 0
+	source 0 - assert 1475544228.003372432, sequence: 1966 - clear  0.000000000, sequence: 0
+	source 0 - assert 1475544229.003370392, sequence: 1967 - clear  0.000000000, sequence: 0
+	source 0 - assert 1475544230.003367995, sequence: 1968 - clear  0.000000000, sequence: 0
+	Install gpsd and gpsd-clients
 
-sudo ppstest /dev/pps0
-trying PPS source "/dev/pps0"
-found PPS source "/dev/pps0"
-ok, found 1 source(s), now start fetching data...
-source 0 - assert 1475544227.003374325, sequence: 1965 - clear  0.000000000, sequence: 0
-source 0 - assert 1475544228.003372432, sequence: 1966 - clear  0.000000000, sequence: 0
-source 0 - assert 1475544229.003370392, sequence: 1967 - clear  0.000000000, sequence: 0
-source 0 - assert 1475544230.003367995, sequence: 1968 - clear  0.000000000, sequence: 0
-Install gpsd and gpsd-clients
-
-
-sudo apt-get -y install gpsd gpsd-clients
+	sudo apt-get -y install gpsd gpsd-clients
 
 
 Configure gpsd
