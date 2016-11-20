@@ -123,6 +123,11 @@ Confirm that GPS codes are output
 	USBAUTO="false"
 	GPSD_SOCKET="/var/run/gpsd.sock"
 
+- ini_file: dest=/etc/default/gpsd
+            section=drinks
+            option=temperature
+            value=cold
+            backup=yes
 
 Reboot
 
